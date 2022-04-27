@@ -1,6 +1,7 @@
+# UNMAINTAINED - last used/tested in 2020
 FROM ubuntu:18.04
 
-LABEL maintainer="gavindsouza <gavin@erpnext.com>"
+LABEL maintainer="gavindsouza <gavin18d@gmail.com>"
 
 ENV FRAPPE_USER=frappe \
 	MYSQL_PASSWORD=12345678 \
@@ -38,11 +39,11 @@ RUN sudo service mysql restart \
 	&& sudo mysql -u root -p${MYSQL_PASSWORD} -e "DROP USER 'root'@'localhost';CREATE USER 'root'@'%' IDENTIFIED BY '';GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;FLUSH PRIVILEGES;" \
 	&& sudo mysqladmin -u root password ${MYSQL_PASSWORD} \
 	&& mysql -u root -p${MYSQL_PASSWORD} -e " \
-		SET GLOBAL innodb_file_format='Barracuda'; \
-		SET GLOBAL innodb_file_per_table='ON'; \
-		SET GLOBAL innodb_large_prefix='ON'; \
-		SET GLOBAL character_set_server='utf8mb4'; \
-		SET GLOBAL collation_server='utf8mb4_unicode_ci';commit;" \
+	SET GLOBAL innodb_file_format='Barracuda'; \
+	SET GLOBAL innodb_file_per_table='ON'; \
+	SET GLOBAL innodb_large_prefix='ON'; \
+	SET GLOBAL character_set_server='utf8mb4'; \
+	SET GLOBAL collation_server='utf8mb4_unicode_ci';commit;" \
 	&& bench init frappe-bench --frappe-branch ${VERSION} \
 	&& cd frappe-bench \
 	&& bench new-site site1.local --mariadb-root-password ${MYSQL_PASSWORD} --admin-password ${ADMIN_PASSWORD} \

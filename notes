@@ -1,3 +1,5 @@
+# this file contains random text; don't run any commands without understanding what you're doing
+
 To run this ERPNext single container image
 
 docker run -d --name erpnext -p 80:80 frappe/erpnext:version-12
@@ -11,3 +13,14 @@ docker cp erpnext:/home/frappe/frappe-bench/sites/site1.local/private/backups .
 
 docker cp PATH/TO/SQLFILE erpnext:TMP_PATH
 docker exec -it erpnext bench --site site1.local --force restore TMP_PATH
+
+set -euxo pipefail
+
+docker cp erpnext:/home/frappe/frappe-bench/sites /home/docker/frappe-bench
+docker cp erpnext:/var/lib/mysql/. /home/docker/mysql-data
+
+docker container stop erpnext
+docker container rm erpnext
+
+docker run -d --name erpnext -p 80:80 -v /home/docker/frappe-bench/sites:/home/frappe/frappe-bench/sites -v /home/docker/mysql-data:/var/lib/mysql frappe/erpnext:version-12
+docker run -d --name erpnext -p 80:80 -v /home/docker/frappe-bench/sites:/home/frappe/frappe-bench/sites frappe/erpnext:version-12

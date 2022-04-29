@@ -3,7 +3,7 @@ version: "3"
 
 services:
   backend:
-    image: frappe/frappe-worker:latest
+    image: frappe/frappe-worker:v13
     deploy:
       restart_policy:
         condition: on-failure
@@ -12,7 +12,7 @@ services:
       - assets:/home/frappe/frappe-bench/sites/assets
 
   configurator:
-    image: frappe/frappe-worker:latest
+    image: frappe/frappe-worker:v13
     command:
       - configure.py
     environment:
@@ -26,7 +26,7 @@ services:
       - sites:/home/frappe/frappe-bench/sites
 
   create-site:
-    image: frappe/frappe-worker:latest
+    image: frappe/frappe-worker:v13
     deploy:
       restart_policy:
         condition: on-failure
@@ -74,7 +74,7 @@ services:
       - db-data:/var/lib/mysql
 
   frontend:
-    image: frappe/frappe-nginx:latest
+    image: frappe/frappe-nginx:v13
     deploy:
       restart_policy:
         condition: on-failure
@@ -92,7 +92,7 @@ services:
       - "8080:8080"
 
   queue-default:
-    image: frappe/frappe-worker:latest
+    image: frappe/frappe-worker:v13
     deploy:
       restart_policy:
         condition: on-failure
@@ -105,7 +105,7 @@ services:
       - sites:/home/frappe/frappe-bench/sites
 
   queue-long:
-    image: frappe/frappe-worker:latest
+    image: frappe/frappe-worker:v13
     deploy:
       restart_policy:
         condition: on-failure
@@ -118,7 +118,7 @@ services:
       - sites:/home/frappe/frappe-bench/sites
 
   queue-short:
-    image: frappe/frappe-worker:latest
+    image: frappe/frappe-worker:v13
     deploy:
       restart_policy:
         condition: on-failure
@@ -139,7 +139,7 @@ services:
       - redis-data:/data
 
   scheduler:
-    image: frappe/frappe-worker:latest
+    image: frappe/frappe-worker:v13
     deploy:
       restart_policy:
         condition: on-failure
@@ -150,7 +150,7 @@ services:
       - sites:/home/frappe/frappe-bench/sites
 
   websocket:
-    image: frappe/frappe-socketio:latest
+    image: frappe/frappe-socketio:v13
     deploy:
       restart_policy:
         condition: on-failure

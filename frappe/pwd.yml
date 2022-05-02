@@ -53,6 +53,7 @@ services:
           fi
         done;
         echo "common_site_config.json found";
+        bench set-config -g developer_mode 1;
         bench new-site frontend --admin-password=admin --db-root-password=admin --install-app erpnext --set-default;
 
   db:

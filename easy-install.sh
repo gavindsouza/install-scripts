@@ -116,7 +116,7 @@ bench init /home/$FRAPPEUSER/frappe-bench --version $FRAPPEBRANCH
 echo "Creating a new site with $SITENAME"
 cd /home/$FRAPPEUSER/frappe-bench
 bench new site $SITENAME --admin-password $ADMINPW --mariadb-root-password $MDBPW
-bench get-app erpnext https://github.com/frappe/erpnext --branch $BRANCH
+bench get-app https://github.com/frappe/erpnext --branch $BRANCH
 bench --site $SITENAME install-app erpnext
 sudo bench setup production $FRAPPEUSER --yes
 EOF

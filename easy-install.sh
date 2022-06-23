@@ -37,11 +37,13 @@ done
 
 useradd -m -s /usr/bin/bash $FRAPPEUSER
 
-sudo apt install -y python3-pip fontconfig libxrender1 libxext6 xfonts-75dpi xfonts-base wget
+sudo apt update
 
-sudo pip install frappe-bench
+sudo apt install -y python3-pip python3.8-venv fontconfig libxrender1 libxext6 xfonts-75dpi xfonts-base libjpeg-turbo8 wget git certbot
 
-sudo bench setup sudoers
+sudo pip install setuptools wheel frappe-bench
+
+# sudo bench setup sudoers $FRAPPEUSER
 
 # Install docker if it doesn't exist
 if ! command -v docker &> /dev/null
@@ -68,7 +70,7 @@ sudo dpkg -i /tmp/wkhtmltopdf.deb
 sudo rm -rf /tmp/wkhtmltopdf.deb
 
 
-# echo 'frappe ALL=(ALL) NOPASSWD: ALL' | sudo tee -a /etc/sudoers
+echo 'frappe ALL=(ALL) NOPASSWD: ALL' | sudo tee -a /etc/sudoers
 
 sudo -i -u $FRAPPEUSER sh << EOF
 source ~/.profile
@@ -82,10 +84,17 @@ fi
 
 # Restart Shell
 
-# exec $SHELL
+exec $SHELL
 
 source ~/.bashrc
 
+# Install bench
+echo "Installing Bench"
+
+git clone https://github.com/frappe/bench ~/.bench 
+#Editable local install
+pip install setuptools wheel --user
+pip install -e ~/.bench 
 
 # Install the required packages with Nix
 nix-env -iA \
@@ -101,21 +110,13 @@ nix-env -iA \
     nixpkgs.gnumake \
     nixpkgs.mariadb-client \
 
-
-# Install bench
-echo "Installing Bench"
-
-git clone https://github.com/frappe/bench ~/.bench 
-#Editable local install
-pip install -e ~/.bench 
-
 # Init bench
 echo "Installing Bench and Setting Up ERPNext for production"
 bench init /home/$FRAPPEUSER/frappe-bench --version $FRAPPEBRANCH
 
 echo "Creating a new site with $SITENAME"
 cd /home/$FRAPPEUSER/frappe-bench
-bench new site $SITENAME --admin-password $ADMINPW --mariadb-root-password $MDBPW
+bench new-site $SITENAME --admin-password $ADMINPW --mariadb-root-password $MDBPW
 bench get-app https://github.com/frappe/erpnext --branch $BRANCH
 bench --site $SITENAME install-app erpnext
 sudo bench setup production $FRAPPEUSER --yes

@@ -39,11 +39,9 @@ useradd -m -s /usr/bin/bash $FRAPPEUSER
 
 sudo apt update
 
-sudo apt install -y python3-pip python3.8-venv fontconfig libxrender1 libxext6 xfonts-75dpi xfonts-base libjpeg-turbo8 wget git certbot
+sudo apt install -y python3-pip python3.8-venv python3.8-dev wget git certbot
 
-sudo pip install setuptools wheel frappe-bench
-
-# sudo bench setup sudoers $FRAPPEUSER
+sudo pip3 install setuptools wheel frappe-bench
 
 # Install docker if it doesn't exist
 if ! command -v docker &> /dev/null
@@ -60,15 +58,6 @@ sudo gpasswd -a $FRAPPEUSER docker
 wget -O ~/.my.cnf https://gist.githubusercontent.com/athul/96c7e86c7e6e70c7f8d4e87e49c95f32/raw/fa68699858b68d1676134f3d4c5c5f045a4872c9/my.cnf
 sudo docker run --name frappe-mariadb -v ~/.my.cnf:/etc/mysql/my.cnf -e MYSQL_ROOT_PASSWORD=$MDBPW -p 3306:3306 -d docker.io/library/mariadb:10.6
 
-# Install wkhtmltopdf
-echo "Installing wkhtmltopdf"
-
-wget -O /tmp/wkhtmltopdf.deb https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.focal_amd64.deb
-
-sudo dpkg -i /tmp/wkhtmltopdf.deb
-
-sudo rm -rf /tmp/wkhtmltopdf.deb
-
 
 echo 'frappe ALL=(ALL) NOPASSWD: ALL' | sudo tee -a /etc/sudoers
 
@@ -81,20 +70,14 @@ then
     wget https://nixos.org/nix/install -O install-nix.sh
     sh install-nix.sh --daemon
 fi
+EOF
 
-# Restart Shell
-
-exec $SHELL
-
-source ~/.bashrc
+sudo -i -u $FRAPPEUSER sh << EOF
 
 # Install bench
 echo "Installing Bench"
 
-git clone https://github.com/frappe/bench ~/.bench 
-#Editable local install
-pip install setuptools wheel --user
-pip install -e ~/.bench 
+pip3 install setuptools wheel frappe-bench --user
 
 # Install the required packages with Nix
 nix-env -iA \
@@ -109,6 +92,7 @@ nix-env -iA \
     nixpkgs.gcc \
     nixpkgs.gnumake \
     nixpkgs.mariadb-client \
+    nixpkgs.wkhtmltopdf
 
 # Init bench
 echo "Installing Bench and Setting Up ERPNext for production"
